@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysx.mapper.BlogCommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.ysx.pojo.BlogComment">
+            <id property="commentId" column="comment_id" jdbcType="BIGINT"/>
+            <result property="blogId" column="blog_id" jdbcType="BIGINT"/>
+            <result property="commentator" column="commentator" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="websiteUrl" column="website_url" jdbcType="VARCHAR"/>
+            <result property="commentBody" column="comment_body" jdbcType="VARCHAR"/>
+            <result property="commentCreateTime" column="comment_create_time" jdbcType="TIMESTAMP"/>
+            <result property="commentatorIp" column="commentator_ip" jdbcType="VARCHAR"/>
+            <result property="replyBody" column="reply_body" jdbcType="VARCHAR"/>
+            <result property="replyCreateTime" column="reply_create_time" jdbcType="TIMESTAMP"/>
+            <result property="commentStatus" column="comment_status" jdbcType="TINYINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+
+    <update id="checkComment">
+        update tb_blog_comment set comment_status = 1
+        where comment_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

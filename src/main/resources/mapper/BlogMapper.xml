@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysx.mapper.BlogMapper">
+
+    <resultMap id="BaseResultMap" type="com.ysx.pojo.Blog">
+            <id property="blogId" column="blog_id" jdbcType="BIGINT"/>
+            <result property="blogTitle" column="blog_title" jdbcType="VARCHAR"/>
+            <result property="blogSubUrl" column="blog_sub_url" jdbcType="VARCHAR"/>
+            <result property="blogCoverImage" column="blog_cover_image" jdbcType="VARCHAR"/>
+            <result property="blogContent" column="blog_content" jdbcType="VARCHAR"/>
+            <result property="blogCategoryId" column="blog_category_id" jdbcType="INTEGER"/>
+            <result property="blogCategoryName" column="blog_category_name" jdbcType="VARCHAR"/>
+            <result property="blogTags" column="blog_tags" jdbcType="VARCHAR"/>
+            <result property="blogStatus" column="blog_status" jdbcType="TINYINT"/>
+            <result property="blogViews" column="blog_views" jdbcType="BIGINT"/>
+            <result property="enableComment" column="enable_comment" jdbcType="TINYINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        blog_id,blog_title,blog_sub_url,
+        blog_cover_image,blog_content,blog_category_id,
+        blog_category_name,blog_tags,blog_status,
+        blog_views,enable_comment,is_deleted,
+        create_time,update_time
+    </sql>
+    <update id="updateBlogByCategoryId">
+        update tb_blog set blog_category_name=#{categoryName}
+        where blog_category_id = #{id}
+        and is_deleted = 0
+    </update>
+    <update id="updateBlogByCategoryIds">
+        update tb_blog set blog_category_id=0, blog_category_name="日常随笔"
+        where blog_category_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        and is_deleted=0
+    </update>
+    <select id="getBlogListForNew" resultType="com.ysx.controllers.vo.SimpleBlogList">
+        select blog_id, blog_title from tb_blog where is_deleted=0  order by create_time DESC limit 9
+    </select>
+    <select id="getBlogListForViews" resultType="com.ysx.controllers.vo.SimpleBlogList">
+        select blog_id, blog_title from tb_blog where is_deleted=0  order by blog_views DESC limit 9
+    </select>
+    <select id="getTags" resultType="java.lang.Integer">
+        select tag_id from tb_blog_tag_relation
+    </select>
+</mapper>

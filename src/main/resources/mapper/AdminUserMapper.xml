@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysx.mapper.AdminUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.ysx.pojo.AdminUser">
+            <id property="adminUserId" column="admin_user_id" jdbcType="INTEGER"/>
+            <result property="loginUserName" column="login_user_name" jdbcType="VARCHAR"/>
+            <result property="loginPassword" column="login_password" jdbcType="VARCHAR"/>
+            <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+            <result property="locked" column="locked" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        admin_user_id,login_user_name,login_password,
+        nick_name,locked
+    </sql>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysx.mapper.BlogCategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ysx.pojo.BlogCategory">
+            <id property="categoryId" column="category_id" jdbcType="INTEGER"/>
+            <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+            <result property="categoryIcon" column="category_icon" jdbcType="VARCHAR"/>
+            <result property="categoryRank" column="category_rank" jdbcType="INTEGER"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        category_id,category_name,category_icon,
+        category_rank,is_deleted,create_time
+    </sql>
+</mapper>

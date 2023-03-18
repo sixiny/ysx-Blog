@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysx.mapper.BlogTagRelationMapper">
+
+    <resultMap id="BaseResultMap" type="com.ysx.pojo.BlogTagRelation">
+            <id property="relationId" column="relation_id" jdbcType="BIGINT"/>
+            <result property="blogId" column="blog_id" jdbcType="BIGINT"/>
+            <result property="tagId" column="tag_id" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        relation_id,blog_id,tag_id,
+        create_time
+    </sql>
+</mapper>
