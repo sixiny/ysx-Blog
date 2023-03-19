@@ -1,5 +1,6 @@
 package com.ysx.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -49,6 +50,20 @@ public class BlogCommentServiceImpl extends ServiceImpl<BlogCommentMapper, BlogC
             return commentMapper.update(blogComment, new QueryWrapper<BlogComment>().eq("comment_id", commentId)) >0;
         }
         return false;
+    }
+
+    @Override
+    public PageResult getCommentPageByBlogIdAndPageNum(Long blogId, int page) {
+        if (page < 1) {
+            return null;
+        }
+        Page page1 = new Page(page, 8);
+        Page page2 = commentMapper.selectPage(page1, new QueryWrapper<BlogComment>().eq("blog_id", blogId).eq("comment_status", 1));
+        if (!CollectionUtil.isEmpty(page2.getRecords())){
+            PageResult pageResult = new PageResult(page2.getRecords(), (int)page2.getTotal(), 8, page);
+            return pageResult;
+        }
+        return null;
     }
 }
 

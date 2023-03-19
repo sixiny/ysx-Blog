@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @createDate 2023-03-16 11:33:22
 * @Entity com.ysx.pojo.TbAdminUser
 */
+
 @Mapper
 public interface AdminUserMapper extends BaseMapper<AdminUser> {
 

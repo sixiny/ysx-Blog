@@ -18,4 +18,7 @@ public interface BlogCommentService extends IService<BlogComment> {
 
 
     boolean reply(Long commentId, String replyBody);
+
+    //找出相应blog的评论并分页
+    PageResult getCommentPageByBlogIdAndPageNum(Long blogId, int page);
 }

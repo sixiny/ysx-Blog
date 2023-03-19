@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import com.ysx.controllers.vo.BlogDetail;
 import com.ysx.controllers.vo.BlogList;
 import com.ysx.controllers.vo.SimpleBlogList;
 import com.ysx.mapper.BlogCategoryMapper;
+import com.ysx.mapper.BlogCommentMapper;
 import com.ysx.mapper.BlogTagMapper;
 import com.ysx.pojo.Blog;
 import com.ysx.pojo.BlogCategory;
@@ -18,11 +20,13 @@ import com.ysx.service.BlogService;
 import com.ysx.mapper.BlogMapper;
 import com.ysx.service.BlogTagRelationService;
 import com.ysx.service.BlogTagService;
+import com.ysx.utils.MarkDownUtil;
 import com.ysx.utils.PageResult;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +53,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
 
     @Autowired
     private BlogTagMapper tagMapper;
+
+    @Autowired
+    private BlogCommentMapper blogCommentMapper;
 
     @Autowired
     private BlogTagRelationService tagRelationService;
@@ -163,7 +170,50 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
         return blogMapper.getBlogListForViews();
     }
 
+    @Transactional
+    @Override
+    public BlogDetail getBlogDetail(Long blogId) {
+        Blog blog = blogMapper.selectById(blogId);
+        BlogDetail blogDetailTemp = getBlogDetailTemp(blog);
+        return blogDetailTemp;
+    }
 
+    //封装博客详情信息
+    private BlogDetail getBlogDetailTemp(Blog blog){
+        //详情页包含Category图标 评论 评论数等
+        if (blog != null && blog.getBlogStatus() == 1){
+            //浏览量增加
+            blog.setBlogViews(blog.getBlogViews() + 1);
+            blogMapper.update(blog, new QueryWrapper<Blog>().eq("blog_id", blog.getBlogId()));
+            BlogDetail blogDetail = new BlogDetail();
+            BeanUtils.copyProperties(blog, blogDetail);
+            blogDetail.setEnableComment(Byte.parseByte(String.valueOf(blog.getEnableComment())));
+            //转存数据库的markdown为html给前端页面展示
+            blogDetail.setBlogContent(MarkDownUtil.mdToHtml(blogDetail.getBlogContent()));
+            BlogCategory blogCategory = categoryMapper.selectById(blog.getBlogCategoryId());
+            if (blogCategory == null) {
+                blogCategory = new BlogCategory();
+                blogCategory.setCategoryId(0);
+                blogCategory.setCategoryName("默认分类");
+                blogCategory.setCategoryIcon("/admin/dist/img/category/00.png");
+            }
+            //分类信息
+            blogDetail.setBlogCategoryIcon(blogCategory.getCategoryIcon());
+            if (StringUtils.hasText(blog.getBlogTags())) {
+                //标签设置
+                List<String> tags = Arrays.asList(blog.getBlogTags().split(","));
+                blogDetail.setBlogTags(tags);
+            }
+            //设置评论数
+            int num = blogCommentMapper.blogCommentCount(blogDetail.getBlogId(), 1);
+            blogDetail.setCommentCount(num);
+            return blogDetail;
+        }
+        return null;
+    }
+
+
+    //封装查询信息进行简单的博客主页内容展示
     private List<BlogList> getBlogListVOsByBlogs(List<Blog> blogList) {
         // 查出关联的category的图标  赋给 BlogList用于前端页面展示
         List<BlogList> ans = new ArrayList<>();

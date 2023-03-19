@@ -16,6 +16,9 @@ public interface BlogCommentMapper extends BaseMapper<BlogComment> {
 
     int checkComment(@Param("ids") Integer[] ids);
 
+    //查询blog评论数量
+    int blogCommentCount(Long blogId, int commentStatus);
+
 }
 
 

@@ -27,4 +27,13 @@
             #{id}
         </foreach>
     </update>
+    <select id="blogCommentCount" resultType="java.lang.Integer">
+        select count(*) from tb_blog_comment where is_deleted=0
+        <if test="blogId!=null">
+            and blog_id=#{blogId}
+        </if>
+        <if test="commentStatus!=null">
+            and comment_status=#{commentStatus}
+        </if>
+    </select>
 </mapper>

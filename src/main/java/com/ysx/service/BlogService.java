@@ -1,5 +1,6 @@
 package com.ysx.service;
 
+import com.ysx.controllers.vo.BlogDetail;
 import com.ysx.controllers.vo.SimpleBlogList;
 import com.ysx.pojo.Blog;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -31,5 +32,9 @@ public interface BlogService extends IService<Blog> {
 
     //获取点击量最多的blog
     List<SimpleBlogList> getBlogListForViews();
+
+    //获取博客详情信息
+    BlogDetail getBlogDetail(Long blogId);
+
 
 }
