@@ -193,13 +193,13 @@ public class BlogMainController {
         return "blog/" + theme + "/link";
     }
 
-    @ApiOperation("suburl/about切换到自我介绍博客")
-    @GetMapping("{subUrl}")
-    public String detail(HttpServletRequest request, @PathVariable("subUrl") String subUrl) {
-        BlogDetail blogDetailVO = blogService.getBlogDetailBySubUrl(subUrl);
+    @ApiOperation("about切换到自我介绍博客")
+    @GetMapping("/about")
+    public String detail(HttpServletRequest request) {
+        BlogDetail blogDetailVO = blogService.getBlogDetailBySubUrl("about");
         if (blogDetailVO != null) {
             request.setAttribute("blogDetailVO", blogDetailVO);
-            request.setAttribute("pageName", subUrl);
+            request.setAttribute("pageName", "about");
             request.setAttribute("configurations", configService.getAllConfigs());
             return "blog/" + theme + "/detail";
         } else {

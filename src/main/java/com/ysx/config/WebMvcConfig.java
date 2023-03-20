@@ -32,10 +32,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInteceptor).addPathPatterns("/**").excludePathPatterns("/admin/login").excludePathPatterns("/admin/dist/**").excludePathPatterns("/admin/plugins/**")
-                .excludePathPatterns("/common/kaptcha");
-                // swagger-ui  配置swagger放行
-//                .excludePathPatterns("/swagger-resources/**", "/webjars/**",
-//                        "/v2/**", "/swagger-ui.html/**");
+                .excludePathPatterns("/common/kaptcha")
+//                 swagger-ui  配置swagger放行
+                .excludePathPatterns("/swagger-resources/**", "/webjars/**",
+                        "/v2/**", "/swagger-ui.html/**");
     }
 
     // 路径映射

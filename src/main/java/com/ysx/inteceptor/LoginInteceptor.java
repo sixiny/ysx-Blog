@@ -19,7 +19,7 @@ public class LoginInteceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String servletPath = request.getServletPath();
-        System.out.println(servletPath);
+//        System.out.println(servletPath);
         if (!servletPath.equals("/swagger-ui.html") && null == request.getSession().getAttribute("loginUser")) {
             request.getSession().setAttribute("errorMsg", "请重新登陆");
             response.sendRedirect(request.getContextPath() + "/admin/login");
