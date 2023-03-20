@@ -1,5 +1,6 @@
 package com.ysx.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ysx.pojo.Blog;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,9 +46,19 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, Link>
             left = (page - 1) * limit + limit;
         }
         List<Link> ansList = collect.subList((page - 1) * limit, left);
-
         PageResult ans = new PageResult(ansList, links.size(), limit, page);
         return ans;
+    }
+
+    // 按类别分友链
+    @Override
+    public Map<Integer, List<Link>> getLinksForLinkPage() {
+        List<Link> links = linkMapper.selectList(null);
+        if(!CollectionUtil.isEmpty(links)){
+            Map<Integer, List<Link>> collect = links.stream().collect(Collectors.groupingBy(Link::getLinkType));
+            return collect;
+        }
+        return null;
     }
 }
 

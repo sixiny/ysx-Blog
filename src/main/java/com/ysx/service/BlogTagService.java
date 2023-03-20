@@ -25,4 +25,6 @@ public interface BlogTagService extends IService<BlogTag> {
     boolean deleteBatch(Integer[] ids);
 
     List<BlogTagCount> getBlogTagCountForIndex();
+
+
 }

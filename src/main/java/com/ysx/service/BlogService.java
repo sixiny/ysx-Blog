@@ -1,6 +1,7 @@
 package com.ysx.service;
 
 import com.ysx.controllers.vo.BlogDetail;
+import com.ysx.controllers.vo.BlogList;
 import com.ysx.controllers.vo.SimpleBlogList;
 import com.ysx.pojo.Blog;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -35,6 +36,19 @@ public interface BlogService extends IService<Blog> {
 
     //获取博客详情信息
     BlogDetail getBlogDetail(Long blogId);
+
+    //根据标签获取分页列表
+    PageResult getBlogsPageByTag(String tagName, int page);
+
+    //根据分类切分blog
+    PageResult getBlogsPageByCategory(String categoryName, int page);
+
+
+    //根据suburl获取博客信息
+    BlogDetail getBlogDetailBySubUrl(String subUrl);
+
+    //关键字查询博客
+    PageResult getBlogsPageBySearch(String keyword, Integer page);
 
 
 }

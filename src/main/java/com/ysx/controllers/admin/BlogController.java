@@ -134,11 +134,11 @@ public class BlogController {
         if (saveBlog == null){
             return ResultGenerator.genFailResult("你还什么都没弄呢哥们");
         }
-        String saveBlogResult = blogService.saveBlog(saveBlog);
-        if ("success".equals(saveBlogResult)) {
+        boolean saveBlogResult = blogService.update(saveBlog, new QueryWrapper<Blog>().eq("blog_id", blogId));
+        if (saveBlogResult) {
             return ResultGenerator.genSuccessResult("修改成功");
         } else {
-            return ResultGenerator.genFailResult(saveBlogResult);
+            return ResultGenerator.genFailResult("修改失败");
         }
     }
 

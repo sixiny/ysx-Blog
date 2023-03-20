@@ -32,6 +32,8 @@ public interface BlogTagMapper extends BaseMapper<BlogTag> {
     //查找tag出现次数
     int getTagsNums(int id);
 
+
+
 }
 
 

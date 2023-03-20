@@ -9,29 +9,21 @@ import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.ysx.controllers.vo.BlogDetail;
 import com.ysx.controllers.vo.BlogList;
 import com.ysx.controllers.vo.SimpleBlogList;
-import com.ysx.mapper.BlogCategoryMapper;
-import com.ysx.mapper.BlogCommentMapper;
-import com.ysx.mapper.BlogTagMapper;
-import com.ysx.pojo.Blog;
-import com.ysx.pojo.BlogCategory;
-import com.ysx.pojo.BlogTag;
-import com.ysx.pojo.BlogTagRelation;
+import com.ysx.mapper.*;
+import com.ysx.pojo.*;
 import com.ysx.service.BlogService;
-import com.ysx.mapper.BlogMapper;
 import com.ysx.service.BlogTagRelationService;
 import com.ysx.service.BlogTagService;
 import com.ysx.utils.MarkDownUtil;
 import com.ysx.utils.PageResult;
+import com.ysx.utils.PatternUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
 * @author YSX
@@ -59,6 +51,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
 
     @Autowired
     private BlogTagRelationService tagRelationService;
+
+    @Autowired
+    private BlogTagRelationMapper tagRelationMapper;
 
 
     @Override
@@ -141,6 +136,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
         Arrays.stream(ids).forEach(e->{
             blogMapper.deleteById(e);
             tagRelationService.remove(new QueryWrapper<BlogTagRelation>().eq("blog_id", e));
+            //删除相关评论
+            blogCommentMapper.delete(new QueryWrapper<BlogComment>().eq("blog_id", e));
         });
         return "success";
     }
@@ -176,6 +173,56 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog>
         Blog blog = blogMapper.selectById(blogId);
         BlogDetail blogDetailTemp = getBlogDetailTemp(blog);
         return blogDetailTemp;
+    }
+
+    @Override
+    public PageResult getBlogsPageByTag(String tagName, int page) {
+        if(PatternUtil.validKeyword(tagName)){
+            BlogTag tag = tagMapper.selectOne(new QueryWrapper<BlogTag>().eq("tag_name", tagName));
+            Integer[] blogIdsByTagId = tagRelationMapper.getBlogIdsByTagId(tag.getTagId());
+            Page page1 = new Page(page, 9);
+            Page blog_id = blogMapper.selectPage(page1, new QueryWrapper<Blog>().in("blog_id", blogIdsByTagId));
+            List<BlogList> blogList = getBlogListVOsByBlogs(blog_id.getRecords());
+            PageResult pageResult = new PageResult(blogList, (int)blog_id.getTotal(), 9, page);
+            return pageResult;
+        }
+        return null;
+    }
+
+    @Override
+    public PageResult getBlogsPageByCategory(String categoryName, int page) {
+        if(PatternUtil.validKeyword(categoryName)){
+            BlogCategory blogCategory = categoryMapper.selectOne(new QueryWrapper<BlogCategory>().eq("category_name", categoryName));
+            if ("默认分类".equals(categoryName) && blogCategory == null) {
+                blogCategory = new BlogCategory();
+                blogCategory.setCategoryId(0);
+            }
+            if (blogCategory != null && page > 0) {
+                Page page1 = blogMapper.selectPage(new Page(page, 9), new QueryWrapper<Blog>().eq("blog_category_id", blogCategory.getCategoryId()).eq("blog_status", 1));
+                List<BlogList> blogList = getBlogListVOsByBlogs(page1.getRecords());
+                PageResult pageResult = new PageResult(blogList, (int)page1.getTotal(), 9, page);
+                return pageResult;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public BlogDetail getBlogDetailBySubUrl(String subUrl) {
+        Blog blogSubUrl = blogMapper.selectOne(new QueryWrapper<Blog>().eq("blog_sub_url", subUrl));
+        BlogDetail blogDetailTemp = getBlogDetailTemp(blogSubUrl);
+        if (blogDetailTemp != null) {
+            return blogDetailTemp;
+        }
+        return null;
+    }
+
+    @Override
+    public PageResult getBlogsPageBySearch(String keyword, Integer page) {
+        Page blog_title = blogMapper.selectPage(new Page(page, 9), new QueryWrapper<Blog>().like("blog_title", keyword));
+        List blogList = getBlogListVOsByBlogs(blog_title.getRecords());
+        PageResult pageResult = new PageResult(blogList, (int)blog_title.getTotal(), 9, page);
+        return pageResult;
     }
 
     //封装博客详情信息

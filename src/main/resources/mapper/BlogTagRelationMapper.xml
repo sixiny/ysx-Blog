@@ -15,4 +15,7 @@
         relation_id,blog_id,tag_id,
         create_time
     </sql>
+    <select id="getBlogIdsByTagId" resultType="java.lang.Integer">
+        select blog_id from tb_blog_tag_relation where tag_id=#{tagId}
+    </select>
 </mapper>

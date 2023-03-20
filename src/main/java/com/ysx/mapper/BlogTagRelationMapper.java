@@ -13,6 +13,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface BlogTagRelationMapper extends BaseMapper<BlogTagRelation> {
 
+    //根据tag id查询blog id
+    Integer[] getBlogIdsByTagId(int tagId);
 }
 
 

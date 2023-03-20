@@ -1,7 +1,10 @@
 package com.ysx.config;
 
 import com.ysx.common.Constants;
+import com.ysx.inteceptor.LoginInteceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,9 +18,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+
+
+    @Autowired
+    private LoginInteceptor loginInteceptor;
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/admin/index").setViewName("admin/index.html");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loginInteceptor).addPathPatterns("/**").excludePathPatterns("/admin/login").excludePathPatterns("/admin/dist/**").excludePathPatterns("/admin/plugins/**")
+                .excludePathPatterns("/common/kaptcha");
+                // swagger-ui  配置swagger放行
+//                .excludePathPatterns("/swagger-resources/**", "/webjars/**",
+//                        "/v2/**", "/swagger-ui.html/**");
     }
 
     // 路径映射
